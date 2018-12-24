@@ -72,7 +72,7 @@ labels = ReadLabelFile('tflite_model/can_orientation_v1_edgetpu.txt')
 
 
 # Initialize the engine
-engine = ClassificationEngine(model_path,labels)
+engine = ClassificationEngine(model_path)
 
 # VideoStream
 stream = WebcamVideoStream().start()
@@ -102,8 +102,8 @@ while True:
   for result in engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
     #print ('---------------------------')
     prediction = labels[result[0]]
-    score = result[2]
-    print ('Score : ', result[2])
+    #score = result[2]
+    #print ('Score : ', result[2])
 
   time_elapsed = '{:.2f}'.format(engine.get_inference_time())
   text = prediction
