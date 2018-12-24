@@ -65,14 +65,17 @@ def load_labels(filename):
   return my_labels
 
 # Specify the model, image, and labels
-model_path = './tflite_model/aiy_can_orientation_v2_edgetpu.tflite'
-labels = ReadLabelFile('tflite_model/can_orientation_v1_edgetpu.txt')
+orientation_model_path = './tflite_model/aiy_can_orientation_v2_edgetpu.tflite'
+orientation_labels = ReadLabelFile('tflite_model/can_orientation_v1_edgetpu.txt')
 #labels = load_labels('./tflite_model/can_orientation_v1_edgetpu.txt')
 
+presence_model_path = './tflite_model/detect_can_presence/aiy_2018-12-24_model_edgetpu.tflite'
+presence_labels = ReadLabelFile('./tflite_model/detect_can_presence/can_presence_labels.txt')
 
 
 # Initialize the engine
-engine = ClassificationEngine(model_path)
+orientation_engine = ClassificationEngine(orientation_model_path)
+presence_engine = ClassificationEngine(presence_model_path)
 
 # VideoStream
 stream = WebcamVideoStream().start()
@@ -96,17 +99,26 @@ while True:
 
   # Run inference with edgetpu
 
-  prediction = "No Label"
-  print(engine.ClassifyWithImage(img, threshold = 0.55, top_k=1))
+  orientation_prediction = "No Label"
+  print(orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1))
 
-  for result in engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
+  for result in presence_engine.ClassifyWithImage(img, threshold = 0.85, top_k=1):
     #print ('---------------------------')
-    prediction = labels[result[0]]
+    presence_prediction = presence_labels[result[0]]
     #score = result[2]
     #print ('Score : ', result[2])
 
-  time_elapsed = '{:.2f}'.format(engine.get_inference_time())
-  text = prediction
+  for result in orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
+    #print ('---------------------------')
+    orientation_prediction = orientation_labels[result[0]]
+    #score = result[2]
+    #print ('Score : ', result[2])
+
+  
+  text = presence_prediction
+  draw.text((0,0), text=text, font=font, fill='blue')
+
+  text = orientation_prediction
   draw.text((0,0), text=text, font=font, fill='blue')
 
  
