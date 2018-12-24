@@ -105,19 +105,22 @@ while True:
   for result in presence_engine.ClassifyWithImage(img, threshold = 0.85, top_k=1):
     #print ('---------------------------')
     presence_prediction = presence_labels[result[0]]
-    #score = result[2]
-    #print ('Score : ', result[2])
-
-  for result in orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
-    #print ('---------------------------')
     orientation_prediction = orientation_labels[result[0]]
     #score = result[2]
     #print ('Score : ', result[2])
+
+  #for result in orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
+  #  #print ('---------------------------')
+  #  orientation_prediction = orientation_labels[result[0]]
+  #  #score = result[2]
+  #  #print ('Score : ', result[2])
 
   
   text = presence_prediction
   draw.text((0,0), text=text, font=font, fill='blue')
 
+  fps.update()
+  fps.stop()
   text = orientation_prediction
   draw.text((0,0), text=text, font=font, fill='blue')
 
