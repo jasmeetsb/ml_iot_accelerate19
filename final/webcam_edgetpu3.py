@@ -108,7 +108,11 @@ while True:
   for result in presence_engine.ClassifyWithImage(img, threshold = 0.85, top_k=1):
     #print ('---------------------------')
     presence_prediction = presence_labels[result[0]]
-  #  orientation_prediction = orientation_labels[result[0]]
+
+    for result2 in orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
+      #result2= orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1)
+      print(result2)
+      orientation_prediction = orientation_labels[result2[0]]
     #score = result[2]
     #print ('Score : ', result[2])
 
@@ -125,14 +129,14 @@ while True:
   fps.update()
   fps.stop()
   text = orientation_prediction
-  draw.text((0,40), text=text, font=font, fill='blue')
+  draw.text((0,50), text=text, font=font, fill='blue')
 
  
   fps.update()
   fps.stop()
   current_fps = '{:.2f}'.format(fps.fps())
   text = 'Frames / Second: {}'.format(current_fps)
-  draw.text((0,80), text=text, font=font, fill='blue')
+  draw.text((0,90), text=text, font=font, fill='blue')
 
   # Display the resulting frame
   cv2.imshow('Video', numpy.array(img))
