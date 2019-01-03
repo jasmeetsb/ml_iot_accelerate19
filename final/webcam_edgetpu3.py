@@ -66,9 +66,8 @@ def load_labels(filename):
   return my_labels
 
 # Specify the model, image, and labels
-orientation_model_path = './tflite_model/aiy_can_orientation_v2_edgetpu.tflite'
-orientation_labels = ReadLabelFile('./tflite_model/can_orientation_v1_edgetpu.txt')
-#labels = load_labels('./tflite_model/can_orientation_v1_edgetpu.txt')
+orientation_model_path = './tflite_model/detect_can_orientation/aiy_can_orientation_v2_edgetpu.tflite'
+orientation_labels = ReadLabelFile('./tflite_model/detect_can_orientation/can_orientation_v1_edgetpu.txt')
 
 presence_model_path = './tflite_model/detect_can_presence/aiy_2018-12-24_model_edgetpu.tflite'
 presence_labels = ReadLabelFile('./tflite_model/detect_can_presence/can_presence_labels.txt')

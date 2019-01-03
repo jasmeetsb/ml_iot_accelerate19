@@ -1,2 +1,0 @@
-0:horizontal_can
-1:vertical_can
