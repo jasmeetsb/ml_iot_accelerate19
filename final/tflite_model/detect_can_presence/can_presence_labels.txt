@@ -1,2 +1,2 @@
-0:can_detected
-1:can_not_detected
+0:Can detected
+1:Can not detected

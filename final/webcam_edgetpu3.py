@@ -100,7 +100,7 @@ while True:
   # Run inference with edgetpu
 
   orientation_prediction = "No Label"
-  presence_prediction = "can_not_detected"
+  presence_prediction = "Can not detected"
 
   print("Presence",presence_engine.ClassifyWithImage(img, threshold = 0.91, top_k=1))
 
@@ -108,12 +108,16 @@ while True:
     #print ('---------------------------')
     presence_prediction = presence_labels[result[0]]
 
-    for result2 in orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
-      #result2= orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1)
-      print(result2)
-      orientation_prediction = orientation_labels[result2[0]]
-    #score = result[2]
-    #print ('Score : ', result[2])
+
+    if(presence_prediction == 'can_detected'):
+
+      for result2 in orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
+        #result2= orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1)
+        print(result2)
+
+        orientation_prediction = orientation_labels[result2[0]]
+      #score = result[2]
+      #print ('Score : ', result[2])
 
   #for result in orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
   #  #print ('---------------------------')
@@ -127,7 +131,7 @@ while True:
 
   fps.update()
   fps.stop()
-  text = orientation_prediction
+  text = 'Can Orientation: '+orientation_prediction
   draw.text((0,50), text=text, font=font, fill='blue')
 
  
