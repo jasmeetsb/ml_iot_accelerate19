@@ -1,3 +1,4 @@
+
 import cv2
 import os
 import numpy
@@ -75,7 +76,7 @@ presence_labels = ReadLabelFile('./tflite_model/detect_can_presence/can_presence
 
 # Initialize the engine
 orientation_engine = ClassificationEngine(orientation_model_path)
-#presence_engine = ClassificationEngine(presence_model_path)
+presence_engine = ClassificationEngine(presence_model_path)
 
 # VideoStream
 stream = WebcamVideoStream().start()
@@ -100,26 +101,26 @@ while True:
   # Run inference with edgetpu
 
   orientation_prediction = "No Label"
-  #presence_prediction = "No Label"
+  presence_prediction = "can_not_detected"
 
-  #print("Presence",presence_engine.ClassifyWithImage(img, threshold = 0.85, top_k=1))
+  print("Presence",presence_engine.ClassifyWithImage(img, threshold = 0.91, top_k=1))
 
-  #for result in presence_engine.ClassifyWithImage(img, threshold = 0.85, top_k=1):
+  for result in presence_engine.ClassifyWithImage(img, threshold = 0.85, top_k=1):
     #print ('---------------------------')
-  #  presence_prediction = presence_labels[result[0]]
+    presence_prediction = presence_labels[result[0]]
   #  orientation_prediction = orientation_labels[result[0]]
     #score = result[2]
     #print ('Score : ', result[2])
 
-  for result in orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
+  #for result in orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
   #  #print ('---------------------------')
-    orientation_prediction = orientation_labels[result[0]]
+  #  orientation_prediction = orientation_labels[result[0]]
   #  #score = result[2]
   #  #print ('Score : ', result[2])
 
   
-  #text = presence_prediction
-  #draw.text((0,10), text=text, font=font, fill='blue')
+  text = presence_prediction
+  draw.text((0,10), text=text, font=font, fill='blue')
 
   fps.update()
   fps.stop()
@@ -131,7 +132,7 @@ while True:
   fps.stop()
   current_fps = '{:.2f}'.format(fps.fps())
   text = 'Frames / Second: {}'.format(current_fps)
-  draw.text((0,60), text=text, font=font, fill='blue')
+  draw.text((0,80), text=text, font=font, fill='blue')
 
   # Display the resulting frame
   cv2.imshow('Video', numpy.array(img))
