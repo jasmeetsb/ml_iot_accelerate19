@@ -115,7 +115,7 @@ while True:
     previous_status = result[0]
 
 
-    if(presence_prediction == 'can_detected'):
+    if(presence_prediction == 'Can detected'):
 
       for result2 in orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
         #result2= orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1)
