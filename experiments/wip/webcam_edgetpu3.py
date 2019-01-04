@@ -136,7 +136,7 @@ while True:
   text = 'Can Orientation: '+orientation_prediction
   draw.text((0,50), text=text, font=font, fill='blue')
 
-  text = str(cnt)
+  text = 'No. of cans: '+str(cnt)
   draw.text((0,90), text=text, font=font, fill='blue')
  
   fps.update()
