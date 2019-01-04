@@ -2,15 +2,12 @@
 import cv2
 import os
 import numpy
-
 import sys
 import datetime
 import time
-
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
-from edgetpu.detection.engine import DetectionEngine
 
 from edgetpu.classification.engine import ClassificationEngine
 
@@ -66,9 +63,8 @@ def load_labels(filename):
   return my_labels
 
 # Specify the model, image, and labels
-orientation_model_path = './tflite_model/aiy_can_orientation_v2_edgetpu.tflite'
-orientation_labels = ReadLabelFile('./tflite_model/can_orientation_v1_edgetpu.txt')
-#labels = load_labels('./tflite_model/can_orientation_v1_edgetpu.txt')
+orientation_model_path = './tflite_model/detect_can_orientation/aiy_can_orientation_v2_edgetpu.tflite'
+orientation_labels = ReadLabelFile('./tflite_model/detect_can_orientation/can_orientation_v1_edgetpu.txt')
 
 presence_model_path = './tflite_model/detect_can_presence/aiy_2018-12-24_model_edgetpu.tflite'
 presence_labels = ReadLabelFile('./tflite_model/detect_can_presence/can_presence_labels.txt')
@@ -87,7 +83,9 @@ fps = FPS().start()
 # Draw Options
 font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", 32)
 
-#prediction = "No Label"
+
+previous_status=1
+cnt = 0
 
 while True:
   # Capture frame-by-frame
@@ -101,26 +99,33 @@ while True:
   # Run inference with edgetpu
 
   orientation_prediction = "No Label"
-  presence_prediction = "can_not_detected"
+  presence_prediction = "Can not detected"
 
   print("Presence",presence_engine.ClassifyWithImage(img, threshold = 0.91, top_k=1))
 
   for result in presence_engine.ClassifyWithImage(img, threshold = 0.85, top_k=1):
-    #print ('---------------------------')
+
     presence_prediction = presence_labels[result[0]]
 
-    for result2 in orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
-      #result2= orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1)
-      print(result2)
-      orientation_prediction = orientation_labels[result2[0]]
-    #score = result[2]
-    #print ('Score : ', result[2])
+    #Counter
 
-  #for result in orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
-  #  #print ('---------------------------')
-  #  orientation_prediction = orientation_labels[result[0]]
-  #  #score = result[2]
-  #  #print ('Score : ', result[2])
+    if(previous_status > result[0]):
+      print('Changed from 0 to 1')
+      cnt = cnt+1
+    previous_status = result[0]
+
+
+    if(presence_prediction == 'can_detected'):
+
+      for result2 in orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1):
+        #result2= orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1)
+        print(result2)
+
+        orientation_prediction = orientation_labels[result2[0]]
+      #score = result[2]
+      #print ('Score : ', result[2])
+
+
 
   
   text = presence_prediction
@@ -128,15 +133,19 @@ while True:
 
   fps.update()
   fps.stop()
-  text = orientation_prediction
+  text = 'Can Orientation: '+orientation_prediction
   draw.text((0,50), text=text, font=font, fill='blue')
 
+  text = str(cnt)
+  draw.text((0,90), text=text, font=font, fill='blue')
  
   fps.update()
   fps.stop()
   current_fps = '{:.2f}'.format(fps.fps())
   text = 'Frames / Second: {}'.format(current_fps)
-  draw.text((0,90), text=text, font=font, fill='blue')
+  draw.text((0,120), text=text, font=font, fill='blue')
+
+
 
   # Display the resulting frame
   cv2.imshow('Video', numpy.array(img))
