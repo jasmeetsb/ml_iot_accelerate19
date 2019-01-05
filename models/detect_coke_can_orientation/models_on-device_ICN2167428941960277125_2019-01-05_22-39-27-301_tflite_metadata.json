@@ -1,0 +1,10 @@
+{
+    "batchSize": 1, 
+    "imageChannels": 3, 
+    "imageHeight": 224, 
+    "imageWidth": 224, 
+    "inferenceType": "QUANTIZED_UINT8", 
+    "inputTensor": "image", 
+    "inputType": "QUANTIZED_UINT8", 
+    "outputTensor": "scores"
+}
