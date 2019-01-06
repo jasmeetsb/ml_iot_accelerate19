@@ -8,6 +8,7 @@ import time
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+import time
 
 from edgetpu.classification.engine import ClassificationEngine
 
@@ -100,6 +101,7 @@ while True:
 
     orientation_prediction = "No Label"
     presence_prediction = "Can not detected"
+    last_detection_time = 0
 
     presence_result = presence_engine.ClassifyWithImage(
         img, threshold=0.91, top_k=1)
@@ -113,13 +115,16 @@ while True:
         presence_prediction = presence_labels[result[0]]
 
         # Counter
-        if(previous_status > result[0]):
-            print('Changed from 1 to 0')
+        if((previous_status > result[0]) and ((time.time()-last_detection_time)>3):
+            print('New can detected')
             cnt = cnt+1
         previous_status = result[0]
 
         if(presence_prediction == 'Can detected'):
+            #Record timestamp for last can detection
+            last_detection_time=time.time()
 
+            #Detect Can's orientation
             for result2 in orientation_engine.ClassifyWithImage(img, threshold=0.75, top_k=1):
                 #result2= orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1)
                 print(result2)
