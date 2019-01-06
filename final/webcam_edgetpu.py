@@ -69,7 +69,7 @@ def load_labels(filename):
 orientation_model_path = './tflite_model/detect_coke_can_orientation/coke_orientation_ond_med_ICN2167428941960277125_edgetpu.tflite'
 orientation_labels = ReadLabelFile('./tflite_model/detect_coke_can_orientation/orientation_labels.txt')
 
-presence_model_path = './tflite_model/detect_coke_can_presence/coke_presence_ond_med_ICN3944128884739395049_edgetpu.tflite'
+presence_model_path = './tflite_model/detect_coke_can_presence/detect_coke_can_presencev2_ond_med_ICN1958104069127830101_edgetpu.tflite'
 presence_labels = ReadLabelFile('./tflite_model/detect_coke_can_presence/presence_labels.txt')
 
 
