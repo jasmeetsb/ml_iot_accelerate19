@@ -101,14 +101,18 @@ while True:
   orientation_prediction = "No Label"
   presence_prediction = "Can not detected"
 
-  print("Presence",presence_engine.ClassifyWithImage(img, threshold = 0.91, top_k=1))
+  presence_result = presence_engine.ClassifyWithImage(img, threshold = 0.91, top_k=1)
 
-  for result in presence_engine.ClassifyWithImage(img, threshold = 0.85, top_k=1):
+  print("Presence",presence_result)
 
+  if not presence_result:
+    previous_status = 1
+
+
+  for result in presence_result:
     presence_prediction = presence_labels[result[0]]
 
     #Counter
-
     if(previous_status > result[0]):
       print('Changed from 0 to 1')
       cnt = cnt+1
