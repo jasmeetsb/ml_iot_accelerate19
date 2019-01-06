@@ -81,7 +81,7 @@ while True:
   current_fps = '{:.2f}'.format(fps.fps())
   text = 'Frames / Second: {}'.format(current_fps)
 
-  draw.rectangle(((7,30),(200,70)), fill=None, outline='red')
+  draw.rectangle(((7,30),(200,70)), fill='white', outline='black')
   draw.text((10,40), text=text, font=font, align='center', fill=(0,0,255,128))
 
   # Display the resulting frame

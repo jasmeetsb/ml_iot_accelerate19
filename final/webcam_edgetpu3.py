@@ -114,7 +114,7 @@ while True:
 
     #Counter
     if(previous_status > result[0]):
-      print('Changed from 0 to 1')
+      print('Changed from 1 to 0')
       cnt = cnt+1
     previous_status = result[0]
 
