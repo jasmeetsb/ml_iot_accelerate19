@@ -87,6 +87,7 @@ font = ImageFont.truetype(
 #Variables for can counter
 previous_status = 1
 cnt = 0
+last_detection_time=0
 
 while True:
     # Capture frame-by-frame
@@ -101,7 +102,6 @@ while True:
 
     orientation_prediction = "No Label"
     presence_prediction = "Can not detected"
-    last_detection_time = 0
 
     presence_result = presence_engine.ClassifyWithImage(
         img, threshold=0.91, top_k=1)
@@ -115,7 +115,7 @@ while True:
         presence_prediction = presence_labels[result[0]]
 
         # Counter
-        if((previous_status > result[0]) and ((time.time()-last_detection_time)>3):
+        if((previous_status > result[0]) and ((time.time()-last_detection_time)>2)):
             print('New can detected')
             cnt = cnt+1
         previous_status = result[0]
