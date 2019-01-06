@@ -80,7 +80,7 @@ fps = FPS().start()
 
 # Draw Options
 font = ImageFont.truetype(
-    "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", 32)
+    "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", 14)
 
 
 #Variables for can counter
@@ -120,7 +120,7 @@ while True:
 
         if(presence_prediction == 'Can detected'):
 
-            for result2 in orientation_engine.ClassifyWithImage(img, threshold=0.55, top_k=1):
+            for result2 in orientation_engine.ClassifyWithImage(img, threshold=0.75, top_k=1):
                 #result2= orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1)
                 print(result2)
 
@@ -129,22 +129,22 @@ while True:
             #print ('Score : ', result[2])
 
     text = presence_prediction
-    draw.rectangle(((0,0),(200,70)), fill='white', outline='black')
-    draw.text((5, 10), text=text, font=font, fill='blue')
+    draw.rectangle(((0,0),(230,80)), fill='white', outline='black')
+    draw.text((5, 5), text=text, font=font, fill='blue')
 
     fps.update()
     fps.stop()
     text = 'Can Orientation: '+orientation_prediction
-    draw.text((5, 50), text=text, font=font, fill='blue')
+    draw.text((5, 20), text=text, font=font, fill='blue')
 
-    text = 'No. of cans: '+str(cnt)
-    draw.text((5, 90), text=text, font=font, fill='blue')
+    text = 'Can counter: '+str(cnt)
+    draw.text((5, 35), text=text, font=font, fill='blue')
 
     fps.update()
     fps.stop()
     current_fps = '{:.2f}'.format(fps.fps())
     text = 'Frames / Second: {}'.format(current_fps)
-    draw.text((5, 120), text=text, font=font, fill='blue')
+    draw.text((5, 55), text=text, font=font, fill='blue')
 
     # Display the resulting frame
     cv2.imshow('Video', numpy.array(img))
