@@ -72,7 +72,8 @@ presence_labels = ReadLabelFile(
     './tflite_model/detect_coke_can_presence/presence_labels.txt')
 
 ###Object Detection
-obj_model_path = './tflite_model/obj_det_model/mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite'
+#obj_model_path = './tflite_model/obj_det_model/mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite'
+obj_model_path = './tflite_model/mobilenet_ssd_v2_face_quant_postprocess_edgetpu2.tflite'
 obj_labels = {0: 'face', 1: 'background'}
 
 
@@ -81,7 +82,11 @@ orientation_engine = ClassificationEngine(orientation_model_path)
 presence_engine = ClassificationEngine(presence_model_path)
 
 ##Object Detection
+print("Begine  creating engine instance")
 obj_engine = DetectionEngine(obj_model_path)
+print("Done..")
+
+
 
 # VideoStream
 stream = WebcamVideoStream().start()
@@ -111,7 +116,7 @@ while True:
     # Run inference with edgetpu
 
 
-    ans = engine.DetectWithImage(img, threshold=0.05, relative_coord=False, top_k=10)
+    ans = obj_engine.DetectWithImage(img, threshold=0.05, relative_coord=False, top_k=10)
 
     if ans:
       for face in ans:
