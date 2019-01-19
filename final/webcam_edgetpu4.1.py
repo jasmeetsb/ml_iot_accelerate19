@@ -72,8 +72,7 @@ presence_labels = ReadLabelFile(
     './tflite_model/detect_coke_can_presence/presence_labels.txt')
 
 ###Object Detection
-#obj_model_path = './tflite_model/obj_det_model/mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite'
-obj_model_path = './tflite_model/mobilenet_ssd_v2_face_quant_postprocess_edgetpu2.tflite'
+obj_model_path = './tflite_model/obj_det_model/can_detect_300x300_edgetpu.tflite'
 obj_labels = {0: 'face', 1: 'background'}
 
 
