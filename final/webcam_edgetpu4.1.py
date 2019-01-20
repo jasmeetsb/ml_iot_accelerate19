@@ -115,7 +115,7 @@ while True:
     # Run inference with edgetpu
 
 
-    ans = obj_engine.DetectWithImage(img, threshold=0.05, relative_coord=False, top_k=10)
+    ans = obj_engine.DetectWithImage(img, threshold=0.05, relative_coord=False, top_k=1)
 
     if ans:
       for face in ans:
