@@ -63,11 +63,11 @@ def ReadLabelFile(file_path):
 
 
 # Specify the model, image, and labels
-orientation_model_path = './tflite_model/detect_coke_can_orientation/coke_orientation_ond_med_ICN2167428941960277125_edgetpu.tflite'
+orientation_model_path = './tflite_model/detect_coke_can_orientation/models_on-device_ICN6775484298763384503_jan20_edgetpu.tflite'
 orientation_labels = ReadLabelFile(
     './tflite_model/detect_coke_can_orientation/orientation_labels.txt')
 
-presence_model_path = './tflite_model/detect_coke_can_presence/detect_coke_can_presencev2_ond_med_ICN1958104069127830101_edgetpu.tflite'
+presence_model_path = './tflite_model/detect_coke_can_presence/models_on-device_ICN2207431524157418399_jan20_edgetpu.tflite'
 presence_labels = ReadLabelFile(
     './tflite_model/detect_coke_can_presence/presence_labels.txt')
 
