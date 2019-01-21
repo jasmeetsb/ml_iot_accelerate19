@@ -125,7 +125,7 @@ while True:
     presence_prediction = "Can not detected"
 
     presence_result = presence_engine.ClassifyWithImage(
-        img, threshold=0.91, top_k=1)
+        img, threshold=0.55, top_k=1)
 
     print("Presence", presence_result)
 
@@ -146,7 +146,7 @@ while True:
             last_detection_time=time.time()
 
             #Detect Can's orientation
-            for result2 in orientation_engine.ClassifyWithImage(img, threshold=0.75, top_k=1):
+            for result2 in orientation_engine.ClassifyWithImage(img, threshold=0.55, top_k=1):
                 #result2= orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1)
                 print(result2)
 
