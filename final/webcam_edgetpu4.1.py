@@ -72,9 +72,9 @@ presence_labels = ReadLabelFile(
     './tflite_model/detect_coke_can_presence/presence_labels.txt')
 
 ###Object Detection
-obj_model_path = './tflite_model/obj_det_model/can_detect_300x300_edgetpu.tflite'
-obj_labels = {0: 'face', 1: 'background'}
-
+obj_model_path = './tflite_model/obj_det_model/detect_1548129105537_edgetpu.tflite'
+#obj_labels = {0: 'face', 1: 'background'}
+obj_labels = {1: 'coke_can'}
 
 # Initialize the engine
 orientation_engine = ClassificationEngine(orientation_model_path)
