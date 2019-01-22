@@ -67,7 +67,7 @@ orientation_model_path = './tflite_model/detect_coke_can_orientation/models_on-d
 orientation_labels = ReadLabelFile(
     './tflite_model/detect_coke_can_orientation/orientation_labels.txt')
 
-presence_model_path = './tflite_model/detect_coke_can_presence/models_on-device_ICN2207431524157418399_jan20_edgetpu.tflite'
+presence_model_path = './tflite_model/detect_coke_can_presence/small_models_on-device_ICN2207431524157418399_jan20_edgetpu.tflite'
 presence_labels = ReadLabelFile(
     './tflite_model/detect_coke_can_presence/presence_labels.txt')
 
