@@ -171,10 +171,14 @@ while True:
 
     fps.update()
     fps.stop()
-    current_fps = '{:.2f}'.format(fps.fps())
-    text = 'Frames / Second: {}'.format(current_fps)
+    #current_fps = '{:.2f}'.format(fps.fps())
+    #text = 'Frames / Second: {}'.format(current_fps)
+    #draw.text((5, 55), text=text, font=font, fill='blue')
+
+    text = 'Time per inference(presence): '+str(pres_inference_time)
     draw.text((5, 55), text=text, font=font, fill='blue')
 
+    
     # Display the resulting frame
     cv2.imshow('Video', numpy.array(img))
 
