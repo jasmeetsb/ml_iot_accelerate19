@@ -175,7 +175,7 @@ while True:
     #text = 'Frames / Second: {}'.format(current_fps)
     #draw.text((5, 55), text=text, font=font, fill='blue')
 
-    text = 'Time per inference(presence): '
+    text = 'Time per inference: '
     draw.text((5, 55), text=text, font=font, fill='blue')
 
     text = 'Presence_Model: '+str(pres_inference_time)
