@@ -113,9 +113,12 @@ while True:
     draw = ImageDraw.Draw(img)
 
     # Run inference with edgetpu
-
-
+    ## Time the inference for prediction model
+    pres_start_time = time.time()
     ans = obj_engine.DetectWithImage(img, threshold=0.05, relative_coord=False, top_k=1)
+    pres_end_time = time.time()
+    pres_inference_time = pres_end_time - pres_start_time
+    print('Inference time:',pres_inference_time)
 
     if ans:
       for face in ans:
