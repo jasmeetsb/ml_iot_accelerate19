@@ -158,7 +158,7 @@ while True:
             #print ('Score : ', result[2])
 
     text = presence_prediction
-    draw.rectangle(((0,0),(230,80)), fill='white', outline='black')
+    draw.rectangle(((0,0),(230,95)), fill='white', outline='black')
     draw.text((5, 5), text=text, font=font, fill='blue')
 
     fps.update()
@@ -175,8 +175,11 @@ while True:
     #text = 'Frames / Second: {}'.format(current_fps)
     #draw.text((5, 55), text=text, font=font, fill='blue')
 
-    text = 'Time per inference(presence): '+str(pres_inference_time)
+    text = 'Time per inference(presence): '
     draw.text((5, 55), text=text, font=font, fill='blue')
+
+    text = 'Presence_Model: '+str(pres_inference_time)
+    draw.text((5, 70), text=text, font=font, fill='blue')
 
     
     # Display the resulting frame
