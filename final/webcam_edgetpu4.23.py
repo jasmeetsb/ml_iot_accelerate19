@@ -139,6 +139,7 @@ while True:
 
     orientation_prediction = "No Label"
     presence_prediction = "Can not detected"
+    orientation_error = "None"
 
     presence_result = presence_engine.ClassifyWithImage(
         img, threshold=0.55, top_k=1)
