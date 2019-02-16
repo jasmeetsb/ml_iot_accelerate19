@@ -10,15 +10,6 @@ from PIL import ImageDraw
 from PIL import ImageFont
 import time
 
-import time
-import datetime
-import json
-import csv
-# capture mac adress for identity
-from uuid import getnode as get_mac
-mac = get_mac()
-
-
 from edgetpu.classification.engine import ClassificationEngine
 
 #For Object Detection
@@ -82,6 +73,7 @@ presence_labels = ReadLabelFile(
 
 ###Object Detection
 obj_model_path = './tflite_model/obj_det_model/detect_1548129105537_edgetpu.tflite'
+
 obj_labels = {1: 'coke_can'}
 
 # Initialize the engine
@@ -89,7 +81,7 @@ orientation_engine = ClassificationEngine(orientation_model_path)
 presence_engine = ClassificationEngine(presence_model_path)
 
 ##Object Detection
-print("Begin  creating engine instance")
+print("Begine  creating engine instance")
 obj_engine = DetectionEngine(obj_model_path)
 print("Done..")
 
@@ -120,17 +112,10 @@ while True:
     img = Image.fromarray(frame)
     draw = ImageDraw.Draw(img)
 
-    # time and date functions to capture part of the telemetry to IoT Core
-    ts = time.time()
-    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-
     # Run inference with edgetpu
-    ## Time the inference for prediction model
-    pres_start_time = time.time()
     ans = obj_engine.DetectWithImage(img, threshold=0.05, relative_coord=False, top_k=1)
-    pres_end_time = time.time()
-    pres_inference_time = pres_end_time - pres_start_time
-    print('Inference time:',pres_inference_time)
+
+
 
     if ans:
       for can in ans:
@@ -138,7 +123,6 @@ while True:
 
     orientation_prediction = "No Label"
     presence_prediction = "Can not detected"
-    orientation_error = "None"
 
     presence_result = presence_engine.ClassifyWithImage(
         img, threshold=0.55, top_k=1)
@@ -163,24 +147,13 @@ while True:
 
             #Detect Can's orientation
             for result2 in orientation_engine.ClassifyWithImage(img, threshold=0.55, top_k=1):
-                #result2= orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1)
                 print(result2)
-                #Write the reults to CSV file as ouput which then will be sent to IoT core as MQTT payload
-                data = (st,mac,result[0],result2[0],result2[1],cnt)
-                with open('data.csv', 'a',newline='') as f:
-                    writer = csv.writer(f)
-                    writer.writerow(data)
-                    sys.stdout.flush()
 
                 orientation_prediction = orientation_labels[result2[0]]
-                for orientation_notify in orientation_prediction:
-                    orientation_error = (orientation_prediction == 'horizontal')
-                    #orientation_error1 = (orientation_error, 'Error: Can placed incorrectly')
-            #score = result[2]
-            #print ('Score : ', result[2])
+
 
     text = presence_prediction
-    draw.rectangle(((0,0),(230,110)), fill='white', outline='black')
+    draw.rectangle(((0,0),(230,95)), fill='white', outline='black')
     draw.text((5, 5), text=text, font=font, fill='blue')
 
     fps.update()
@@ -193,18 +166,8 @@ while True:
 
     fps.update()
     fps.stop()
-    #current_fps = '{:.2f}'.format(fps.fps())
-    #text = 'Frames / Second: {}'.format(current_fps)
-    #draw.text((5, 55), text=text, font=font, fill='blue')
 
-    text = 'Time per inference: '
-    draw.text((5, 55), text=text, font=font, fill='blue')
 
-    text = 'Presence_Model: '+str(pres_inference_time)
-    draw.text((5, 70), text=text, font=font, fill='blue')
-
-    text = 'Alert: '+str(orientation_error)
-    draw.text((5,95), text=text, font=font, fill='blue')
 
     
     # Display the resulting frame

@@ -1,4 +1,3 @@
-
 import cv2
 import os
 import numpy
@@ -72,16 +71,17 @@ def ReadLabelFile(file_path):
 
 
 # Specify the model, image, and labels
-orientation_model_path = './tflite_model/detect_coke_can_orientation/small_models_on-device_ICN7706384534542988627_2019-01-22_22-09-30-091_model_1548195125457_edgetpu.tflite'
+orientation_model_path = './aiy_can_orientation_final_edgetpu.tflite'
 orientation_labels = ReadLabelFile(
-    './tflite_model/detect_coke_can_orientation/orientation_labels.txt')
+    './orientation_labels.txt')
 
-presence_model_path = './tflite_model/detect_coke_can_presence/small_models_on-device_ICN2207431524157418399_jan20_edgetpu.tflite'
+presence_model_path = './aiy_can_presence_final_edgetpu.tflite'
 presence_labels = ReadLabelFile(
-    './tflite_model/detect_coke_can_presence/presence_labels.txt')
+    './presence_labels.txt')
 
 ###Object Detection
-obj_model_path = './tflite_model/obj_det_model/detect_1548129105537_edgetpu.tflite'
+obj_model_path = './aiy_obj_det_final_edgetpu.tflite'
+#obj_labels = {0: 'face', 1: 'background'}
 obj_labels = {1: 'coke_can'}
 
 # Initialize the engine
@@ -126,23 +126,27 @@ while True:
 
     # Run inference with edgetpu
     ## Time the inference for prediction model
-    pres_start_time = time.time()
+    #pres_start_time = time.time()
     ans = obj_engine.DetectWithImage(img, threshold=0.05, relative_coord=False, top_k=1)
-    pres_end_time = time.time()
-    pres_inference_time = pres_end_time - pres_start_time
-    print('Inference time:',pres_inference_time)
+    #pres_end_time = time.time()
+    #pres_inference_time = pres_end_time - pres_start_time
+    #print('Inference time:',pres_inference_time)
 
     if ans:
-      for can in ans:
-        draw.rectangle(can.bounding_box.flatten().tolist(), outline='red')
+      for coke_can in ans:
+        draw.rectangle(coke_can.bounding_box.flatten().tolist(), outline='red')
 
     orientation_prediction = "No Label"
     presence_prediction = "Can not detected"
     orientation_error = "None"
+    
 
+    #Detect Can Presence and measure detection time
+    pres_start_time = time.time()
     presence_result = presence_engine.ClassifyWithImage(
         img, threshold=0.55, top_k=1)
-
+    pres_end_time = time.time()
+    pres_inference_time = pres_end_time - pres_start_time
     print("Presence", presence_result)
 
     if not presence_result:
@@ -164,14 +168,23 @@ while True:
             #Detect Can's orientation
             for result2 in orientation_engine.ClassifyWithImage(img, threshold=0.55, top_k=1):
                 #result2= orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1)
+                
+                #Measure time taken for prediction
+                #pres_end_time = time.time()
+                #pres_inference_time = pres_end_time - pres_start_time
+
                 print(result2)
                 #Write the reults to CSV file as ouput which then will be sent to IoT core as MQTT payload
                 data = (st,mac,result[0],result2[0],result2[1],cnt)
-                with open('data.csv', 'a',newline='') as f:
-                    writer = csv.writer(f)
-                    writer.writerow(data)
-                    sys.stdout.flush()
+                
 
+                #Write to json output
+                #jsondata =  ({'infer_time':st,'device_id':mac,'can_presence':str(result[0]),'can_detect':str(result2[0]),'Orientation':str(result2[1]),'Counter':str(cnt)})
+                with open('data.json','a', encoding="utf-8", newline='\r\n') as outfile:
+                    json.dump({'infer_time':st,'device_id':str(mac),'can_presence':str(result[0]),'Orientation':str(result2[0]),'score':str(result2[1]),'Counter':str(cnt)}, outfile)
+                    outfile.write('\n')
+                    sys.stdout.flush()
+                        
                 orientation_prediction = orientation_labels[result2[0]]
                 for orientation_notify in orientation_prediction:
                     orientation_error = (orientation_prediction == 'horizontal')
@@ -179,13 +192,13 @@ while True:
             #score = result[2]
             #print ('Score : ', result[2])
 
-    text = presence_prediction
+    text = 'Presence: '+presence_prediction
     draw.rectangle(((0,0),(230,110)), fill='white', outline='black')
     draw.text((5, 5), text=text, font=font, fill='blue')
 
     fps.update()
     fps.stop()
-    text = 'Can Orientation: '+orientation_prediction
+    text = 'Orientation: '+orientation_prediction
     draw.text((5, 20), text=text, font=font, fill='blue')
 
     text = 'Can counter: '+str(cnt)
@@ -193,18 +206,15 @@ while True:
 
     fps.update()
     fps.stop()
-    #current_fps = '{:.2f}'.format(fps.fps())
-    #text = 'Frames / Second: {}'.format(current_fps)
+
+    #text = 'Time per inference: '
     #draw.text((5, 55), text=text, font=font, fill='blue')
 
-    text = 'Time per inference: '
+    text = 'Time/prediction (ms): '+str(round(pres_inference_time,3)*1000)
     draw.text((5, 55), text=text, font=font, fill='blue')
 
-    text = 'Presence_Model: '+str(pres_inference_time)
-    draw.text((5, 70), text=text, font=font, fill='blue')
-
     text = 'Alert: '+str(orientation_error)
-    draw.text((5,95), text=text, font=font, fill='blue')
+    draw.text((5,75), text=text, font=font, fill='blue')
 
     
     # Display the resulting frame
