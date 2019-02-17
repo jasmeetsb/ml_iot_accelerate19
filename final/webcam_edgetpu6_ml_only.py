@@ -11,21 +11,13 @@ import time
 
 import time
 import datetime
-import json
-import csv
-# capture mac adress for identity
-from uuid import getnode as get_mac
-mac = get_mac()
-
 
 from edgetpu.classification.engine import ClassificationEngine
 
 #For Object Detection
 from edgetpu.detection.engine import DetectionEngine
-
 import imutils
 from imutils.video import FPS
-
 from threading import Thread
 
 
@@ -65,9 +57,6 @@ def ReadLabelFile(file_path):
         pair = line.strip().split(':', maxsplit=1)
         ret[int(pair[0])] = pair[1].strip()
     return ret
-
-
-
 
 
 # Specify the model, image, and labels
@@ -125,12 +114,8 @@ while True:
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
     # Run inference with edgetpu
-    ## Time the inference for prediction model
-    #pres_start_time = time.time()
     ans = obj_engine.DetectWithImage(img, threshold=0.05, relative_coord=False, top_k=1)
-    #pres_end_time = time.time()
-    #pres_inference_time = pres_end_time - pres_start_time
-    #print('Inference time:',pres_inference_time)
+
 
     if ans:
       for coke_can in ans:
@@ -167,30 +152,17 @@ while True:
 
             #Detect Can's orientation
             for result2 in orientation_engine.ClassifyWithImage(img, threshold=0.55, top_k=1):
-                #result2= orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1)
-                
-                #Measure time taken for prediction
-                #pres_end_time = time.time()
-                #pres_inference_time = pres_end_time - pres_start_time
+
 
                 print(result2)
-                #Write the reults to CSV file as ouput which then will be sent to IoT core as MQTT payload
-                data = (st,mac,result[0],result2[0],result2[1],cnt)
-                
 
-                #Write to json output
-                #jsondata =  ({'infer_time':st,'device_id':mac,'can_presence':str(result[0]),'can_detect':str(result2[0]),'Orientation':str(result2[1]),'Counter':str(cnt)})
-                with open('data.json','a', encoding="utf-8", newline='\r\n') as outfile:
-                    json.dump({'infer_time':st,'device_id':str(mac),'can_presence':str(result[0]),'Orientation':str(result2[0]),'score':str(result2[1]),'Counter':str(cnt)}, outfile)
-                    outfile.write('\n')
-                    sys.stdout.flush()
+                
                         
                 orientation_prediction = orientation_labels[result2[0]]
                 for orientation_notify in orientation_prediction:
                     orientation_error = (orientation_prediction == 'horizontal')
-                    #orientation_error1 = (orientation_error, 'Error: Can placed incorrectly')
-            #score = result[2]
-            #print ('Score : ', result[2])
+
+
 
     text = 'Presence: '+presence_prediction
     draw.rectangle(((0,0),(230,110)), fill='white', outline='black')
@@ -207,8 +179,7 @@ while True:
     fps.update()
     fps.stop()
 
-    #text = 'Time per inference: '
-    #draw.text((5, 55), text=text, font=font, fill='blue')
+
 
     text = 'Time/prediction (ms): '+str(round(pres_inference_time,3)*1000)
     draw.text((5, 55), text=text, font=font, fill='blue')
