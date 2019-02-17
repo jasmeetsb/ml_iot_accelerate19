@@ -109,7 +109,7 @@ while True:
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
     # Run inference with edgetpu
-    ans = obj_engine.DetectWithImage(img, threshold=0.05, relative_coord=False, top_k=1)
+    ans = obj_engine.DetectWithImage(img, threshold=0.05, relative_coord=False, top_k=5)
 
 
     if ans:
