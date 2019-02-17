@@ -71,17 +71,17 @@ def ReadLabelFile(file_path):
 
 
 # Specify the model, image, and labels
-orientation_model_path = './aiy_can_orientation_final_edgetpu.tflite'
+orientation_model_path = './tflite_model/detect_coke_can_orientation/models_on-device_ICN6775484298763384503_jan20_edgetpu.tflite'
 orientation_labels = ReadLabelFile(
-    './orientation_labels.txt')
+    './tflite_model/detect_coke_can_orientation/orientation_labels.txt')
 
-presence_model_path = './aiy_can_presence_final_edgetpu.tflite'
+presence_model_path = './tflite_model/detect_coke_can_presence/models_on-device_ICN2207431524157418399_jan20_edgetpu.tflite'
 presence_labels = ReadLabelFile(
-    './presence_labels.txt')
+    './tflite_model/detect_coke_can_presence/presence_labels.txt')
 
 ###Object Detection
-obj_model_path = './aiy_obj_det_final_edgetpu.tflite'
-#obj_labels = {0: 'face', 1: 'background'}
+obj_model_path = './tflite_model/obj_det_model/detect_1548129105537_edgetpu.tflite'
+
 obj_labels = {1: 'coke_can'}
 
 # Initialize the engine
