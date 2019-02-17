@@ -60,13 +60,11 @@ def ReadLabelFile(file_path):
 
 
 # Specify the model, image, and labels
-orientation_model_path = './tflite_model/detect_coke_can_orientation/models_on-device_ICN6775484298763384503_jan20_edgetpu.tflite'
-orientation_labels = ReadLabelFile(
-    './tflite_model/detect_coke_can_orientation/orientation_labels.txt')
+#orientation_model_path = './tflite_model/detect_coke_can_orientation/models_on-device_ICN6775484298763384503_jan20_edgetpu.tflite'
+#orientation_labels = ReadLabelFile('./tflite_model/detect_coke_can_orientation/orientation_labels.txt')
 
-presence_model_path = './tflite_model/detect_coke_can_presence/models_on-device_ICN2207431524157418399_jan20_edgetpu.tflite'
-presence_labels = ReadLabelFile(
-    './tflite_model/detect_coke_can_presence/presence_labels.txt')
+#presence_model_path = './tflite_model/detect_coke_can_presence/models_on-device_ICN2207431524157418399_jan20_edgetpu.tflite'
+#presence_labels = ReadLabelFile('./tflite_model/detect_coke_can_presence/presence_labels.txt')
 
 ###Object Detection
 obj_model_path = './tflite_model/mobilenet_ssd_v2_face_quant_postprocess_edgetpu2.tflite'
@@ -74,8 +72,8 @@ obj_labels = {0: 'face', 1: 'background'}
 
 
 # Initialize the engine
-orientation_engine = ClassificationEngine(orientation_model_path)
-presence_engine = ClassificationEngine(presence_model_path)
+#orientation_engine = ClassificationEngine(orientation_model_path)
+#presence_engine = ClassificationEngine(presence_model_path)
 
 ##Object Detection
 print("Begin  creating engine instance")
@@ -88,17 +86,14 @@ print("Done..")
 stream = WebcamVideoStream().start()
 time.sleep(2.0)
 
-fps = FPS().start()
+
 
 # Draw Options
 font = ImageFont.truetype(
     "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", 14)
 
 
-#Variables for can counter
-previous_status = 1
-cnt = 0
-last_detection_time=0
+
 
 while True:
     # Capture frame-by-frame
@@ -121,71 +116,9 @@ while True:
       for coke_can in ans:
         draw.rectangle(coke_can.bounding_box.flatten().tolist(), outline='red')
 
-    orientation_prediction = "No Label"
-    presence_prediction = "Can not detected"
-    orientation_error = "None"
-    
-
-    #Detect Can Presence and measure detection time
-    pres_start_time = time.time()
-    presence_result = presence_engine.ClassifyWithImage(
-        img, threshold=0.55, top_k=1)
-    pres_end_time = time.time()
-    pres_inference_time = pres_end_time - pres_start_time
-    print("Presence", presence_result)
-
-    if not presence_result:
-        previous_status = 1
-
-    for result in presence_result:
-        presence_prediction = presence_labels[result[0]]
-
-        # Counter
-        if((previous_status > result[0]) and ((time.time()-last_detection_time)>2)):
-            print('New can detected')
-            cnt = cnt+1
-        previous_status = result[0]
-
-        if(presence_prediction == 'Can detected'):
-            #Record timestamp for last can detection
-            last_detection_time=time.time()
-
-            #Detect Can's orientation
-            for result2 in orientation_engine.ClassifyWithImage(img, threshold=0.55, top_k=1):
-
-
-                print(result2)
-
-                
-                        
-                orientation_prediction = orientation_labels[result2[0]]
-                for orientation_notify in orientation_prediction:
-                    orientation_error = (orientation_prediction == 'horizontal')
 
 
 
-    text = 'Presence: '+presence_prediction
-    draw.rectangle(((0,0),(230,110)), fill='white', outline='black')
-    draw.text((5, 5), text=text, font=font, fill='blue')
-
-    fps.update()
-    fps.stop()
-    text = 'Orientation: '+orientation_prediction
-    draw.text((5, 20), text=text, font=font, fill='blue')
-
-    text = 'Can counter: '+str(cnt)
-    draw.text((5, 35), text=text, font=font, fill='blue')
-
-    fps.update()
-    fps.stop()
-
-
-
-    text = 'Time/prediction (ms): '+str(round(pres_inference_time,3)*1000)
-    draw.text((5, 55), text=text, font=font, fill='blue')
-
-    text = 'Alert: '+str(orientation_error)
-    draw.text((5,75), text=text, font=font, fill='blue')
 
     
     # Display the resulting frame
