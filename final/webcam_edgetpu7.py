@@ -27,7 +27,7 @@ from uuid import getnode as get_mac
 mac = get_mac()
 
 
-import imutils.video.WebcamVideoStream
+from imutils.video import WebcamVideoStream
 
 
 # Function to read labels from text files.
@@ -69,7 +69,7 @@ print("Classificatiopn and Detcetion engine instances created")
 
 
 #Start VideoStream
-stream = WebcamVideoStream().start()
+stream = WebcamVideoStream(resolution=(640,480), framerate=32, src=-1).start()
 time.sleep(3.0)
 
 fps = FPS().start()
