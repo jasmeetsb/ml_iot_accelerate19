@@ -1,33 +1,27 @@
 import cv2
 import os
 import numpy
-import sys
-import datetime
 import time
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
-import time
-import datetime
+import imutils
+from imutils.video import WebcamVideoStream
+
+#Dependencies for IoT part
+import sys
 import json
 import csv
-
-import imutils
-#from imutils.video import FPS
-from threading import Thread
+import datetime
 
 #Import edgeTPU Classification function
 from edgetpu.classification.engine import ClassificationEngine
-
 #Import edgeTPU Object Detection function
 from edgetpu.detection.engine import DetectionEngine
 
-# capture mac adress for identity
+# capture mac adress for identity of IoT device
 from uuid import getnode as get_mac
 mac = get_mac()
-
-
-from imutils.video import WebcamVideoStream
 
 
 # Function to read labels from text files.
@@ -67,14 +61,11 @@ obj_engine = DetectionEngine(obj_model_path)
 print("Classificatiopn and Detcetion engine instances created")
 
 
-
 #Start VideoStream
 stream = WebcamVideoStream(src=-1).start()
 time.sleep(3.0)
 
-#fps = FPS().start()
-
-# Draw Options
+# Draw Options - Select Font
 font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", 14)
 
 
@@ -96,16 +87,12 @@ while True:
     ts = time.time()
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
-    # Run inference with edgetpu
-    ## Time the inference for prediction model
-    #pres_start_time = time.time()
-    ans = obj_engine.DetectWithImage(img, threshold=0.05, relative_coord=False, top_k=1)
-    #pres_end_time = time.time()
-    #pres_inference_time = pres_end_time - pres_start_time
-    #print('Inference time:',pres_inference_time)
+    # Run object localization inference with edgetpu
+    obj_det = obj_engine.DetectWithImage(img, threshold=0.05, relative_coord=False, top_k=1)
 
-    if ans:
-      for coke_can in ans:
+
+    if obj_det:
+      for coke_can in obj_det:
         draw.rectangle(coke_can.bounding_box.flatten().tolist(), outline='red')
 
     orientation_prediction = "No Label"
@@ -127,7 +114,8 @@ while True:
     for result in presence_result:
         presence_prediction = presence_labels[result[0]]
 
-        # Counter
+        #Can Counter - To avoid double counting the same can, a delay of 2 seconds from last 
+        #detection is added for the demo
         if((previous_status > result[0]) and ((time.time()-last_detection_time)>2)):
             print('New can detected')
             cnt = cnt+1
@@ -139,17 +127,11 @@ while True:
 
             #Detect Can's orientation
             for result2 in orientation_engine.ClassifyWithImage(img, threshold=0.55, top_k=1):
-                #result2= orientation_engine.ClassifyWithImage(img, threshold = 0.55, top_k=1)
-                
-                #Measure time taken for prediction
-                #pres_end_time = time.time()
-                #pres_inference_time = pres_end_time - pres_start_time
-
+ 
                 print(result2)
-                #Write the reults to CSV file as ouput which then will be sent to IoT core as MQTT payload
+                #Write the results to CSV file as ouput which then will be sent to IoT core as MQTT payload
                 data = (st,mac,result[0],result2[0],result2[1],cnt)
                 
-
                 #Write to json output
                 #jsondata =  ({'infer_time':st,'device_id':mac,'can_presence':str(result[0]),'can_detect':str(result2[0]),'Orientation':str(result2[1]),'Counter':str(cnt)})
                 with open('data.json','a', encoding="utf-8", newline='\r\n') as outfile:
@@ -160,42 +142,30 @@ while True:
                 orientation_prediction = orientation_labels[result2[0]]
                 for orientation_notify in orientation_prediction:
                     orientation_error = (orientation_prediction == 'horizontal')
-                    #orientation_error1 = (orientation_error, 'Error: Can placed incorrectly')
-            #score = result[2]
-            #print ('Score : ', result[2])
 
+
+    #Display predicted information about the current frame
     text = 'Presence: '+presence_prediction
     draw.rectangle(((0,0),(230,110)), fill='white', outline='black')
     draw.text((5, 5), text=text, font=font, fill='blue')
 
-    #fps.update()
-    #fps.stop()
     text = 'Orientation: '+orientation_prediction
     draw.text((5, 20), text=text, font=font, fill='blue')
 
     text = 'Can counter: '+str(cnt)
     draw.text((5, 35), text=text, font=font, fill='blue')
 
-    #fps.update()
-    #fps.stop()
-
-    #text = 'Time per inference: '
-    #draw.text((5, 55), text=text, font=font, fill='blue')
-
     text = 'Time/prediction (ms): '+str(round(pres_inference_time,3)*1000)
     draw.text((5, 55), text=text, font=font, fill='blue')
 
     text = 'Alert: '+str(orientation_error)
     draw.text((5,75), text=text, font=font, fill='blue')
-
     
     # Display the resulting frame
     cv2.imshow('Video', numpy.array(img))
-
-    #fps.update()
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('c'):
         break
 
-# When everything is done, release the capture
+# Cleanup
 cv2.destroyAllWindows()
 stream.stop()
