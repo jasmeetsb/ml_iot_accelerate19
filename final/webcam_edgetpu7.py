@@ -69,7 +69,7 @@ print("Classificatiopn and Detcetion engine instances created")
 
 
 #Start VideoStream
-stream = WebcamVideoStream(resolution=(640,480), src=-1).start()
+stream = WebcamVideoStream(src=-1).start()
 time.sleep(3.0)
 
 fps = FPS().start()
