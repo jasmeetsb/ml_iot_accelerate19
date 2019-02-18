@@ -13,7 +13,7 @@ import json
 import csv
 
 import imutils
-from imutils.video import FPS
+#from imutils.video import FPS
 from threading import Thread
 
 #Import edgeTPU Classification function
@@ -72,7 +72,7 @@ print("Classificatiopn and Detcetion engine instances created")
 stream = WebcamVideoStream(src=-1).start()
 time.sleep(3.0)
 
-fps = FPS().start()
+#fps = FPS().start()
 
 # Draw Options
 font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", 14)
@@ -168,16 +168,16 @@ while True:
     draw.rectangle(((0,0),(230,110)), fill='white', outline='black')
     draw.text((5, 5), text=text, font=font, fill='blue')
 
-    fps.update()
-    fps.stop()
+    #fps.update()
+    #fps.stop()
     text = 'Orientation: '+orientation_prediction
     draw.text((5, 20), text=text, font=font, fill='blue')
 
     text = 'Can counter: '+str(cnt)
     draw.text((5, 35), text=text, font=font, fill='blue')
 
-    fps.update()
-    fps.stop()
+    #fps.update()
+    #fps.stop()
 
     #text = 'Time per inference: '
     #draw.text((5, 55), text=text, font=font, fill='blue')
@@ -192,7 +192,7 @@ while True:
     # Display the resulting frame
     cv2.imshow('Video', numpy.array(img))
 
-    fps.update()
+    #fps.update()
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
